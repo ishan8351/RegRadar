@@ -58,18 +58,59 @@ export default function Team() {
 
   useEffect(() => {
     const fetchTeam = async () => {
+      const CACHE_KEY = 'regradar_team_cache';
+      const CACHE_EXPIRY = 1000 * 60 * 60 * 24;
+
+      const cached = sessionStorage.getItem(CACHE_KEY);
+      if (cached) {
+        try {
+          const { timestamp, data } = JSON.parse(cached);
+          if (Date.now() - timestamp < CACHE_EXPIRY) {
+            setTeam(data);
+            setIsLoading(false);
+            return;
+          }
+        } catch (e) {
+          sessionStorage.removeItem(CACHE_KEY);
+        }
+      }
+
+      const fetchWithRetry = async (url, retries = 2, delay = 1000) => {
+        for (let i = 0; i < retries; i++) {
+          try {
+            const res = await fetch(url);
+            if (res.status === 403 || res.status === 429) {
+              throw new Error('Rate Limited');
+            }
+            if (!res.ok) throw new Error('Network Error');
+            return await res.json();
+          } catch (error) {
+            if (i === retries - 1 || error.message === 'Rate Limited') throw error;
+            await new Promise((resolve) => setTimeout(resolve, delay * Math.pow(2, i)));
+          }
+        }
+      };
+
       try {
         const promises = GITHUB_USERNAMES.map((username) =>
-          fetch(`https://api.github.com/users/${username}`).then((res) => {
-            if (!res.ok) throw new Error('Rate limited or user not found');
-            return res.json();
-          })
+          fetchWithRetry(`https://api.github.com/users/${username}`)
         );
 
         const data = await Promise.all(promises);
+
+        sessionStorage.setItem(
+          CACHE_KEY,
+          JSON.stringify({
+            timestamp: Date.now(),
+            data: data,
+          })
+        );
+
         setTeam(data);
       } catch (error) {
-        console.warn('GitHub API limit reached or network error. Using fallback data.');
+        console.warn(
+          'GitHub API unavailable or rate-limited. Serving highly-available fallback data.'
+        );
         setTeam(FALLBACK_TEAM);
       } finally {
         setIsLoading(false);
