@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileJson, GitPullRequest, ShieldCheck, Play, Loader2, CheckCircle2 } from 'lucide-react';
+import {
+  FileJson,
+  GitPullRequest,
+  ShieldCheck,
+  Play,
+  Loader2,
+  CheckCircle2,
+  X,
+} from 'lucide-react';
+import { useTheme } from './context/ThemeContext';
 
 const scenarios = [
   {
@@ -58,7 +67,8 @@ const scenarios = [
   },
 ];
 
-export default function TechDemo() {
+function TechDemoContent({ onClose }) {
+  const { isDark } = useTheme();
   const [status, setStatus] = useState('idle');
   const [activeScenario, setActiveScenario] = useState(scenarios[0]);
 
@@ -104,20 +114,36 @@ export default function TechDemo() {
         variants={diffLineVariants}
         className={`flex text-[13px] leading-[22px] font-mono w-full ${
           isAddition
-            ? 'bg-[#e6ffec] text-[#055030]'
-            : 'bg-white text-slate-700 hover:bg-slate-50 transition-colors'
+            ? isDark
+              ? 'bg-green-900/30 text-green-400'
+              : 'bg-[#e6ffec] text-[#055030]'
+            : isDark
+              ? 'bg-dark-800 text-slate-300 hover:bg-dark-700 transition-colors'
+              : 'bg-white text-slate-700 hover:bg-slate-50 transition-colors'
         }`}
       >
         <div
-          className={`w-10 md:w-12 shrink-0 border-r border-slate-200 text-right pr-2 md:pr-3 select-none py-[1px] ${
-            isAddition ? 'bg-[#e6ffec] text-slate-400/50' : 'bg-slate-50 text-slate-400'
+          className={`w-10 md:w-12 shrink-0 border-r text-right pr-2 md:pr-3 select-none py-[1px] ${
+            isAddition
+              ? isDark
+                ? 'bg-green-900/20 text-slate-600 border-slate-700'
+                : 'bg-[#e6ffec] text-slate-400/50 border-slate-200'
+              : isDark
+                ? 'bg-dark-700 text-slate-600 border-slate-700'
+                : 'bg-slate-50 text-slate-400 border-slate-200'
           }`}
         >
           {oldLineNum || '\u00A0'}
         </div>
         <div
-          className={`w-10 md:w-12 shrink-0 border-r border-slate-200 text-right pr-2 md:pr-3 select-none py-[1px] ${
-            isAddition ? 'bg-[#ccffd8] text-slate-600 cursor-pointer' : 'bg-slate-50 text-slate-400'
+          className={`w-10 md:w-12 shrink-0 border-r text-right pr-2 md:pr-3 select-none py-[1px] ${
+            isAddition
+              ? isDark
+                ? 'bg-green-900/40 text-green-400 cursor-pointer border-slate-700'
+                : 'bg-[#ccffd8] text-slate-600 cursor-pointer border-slate-200'
+              : isDark
+                ? 'bg-dark-700 text-slate-600 border-slate-700'
+                : 'bg-slate-50 text-slate-400 border-slate-200'
           }`}
         >
           {newLineNum || '\u00A0'}
@@ -125,7 +151,9 @@ export default function TechDemo() {
         <div className="pl-4 py-[1px] whitespace-pre-wrap break-words flex-grow tracking-tight">
           {!isAddition && content.includes('resource') ? (
             <>
-              <span className="text-[#cf222e] font-medium">resource</span>{' '}
+              <span className={isDark ? 'text-red-400 font-medium' : 'text-[#cf222e] font-medium'}>
+                resource
+              </span>{' '}
               {content.replace('resource ', '')}
             </>
           ) : (
@@ -137,21 +165,40 @@ export default function TechDemo() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-100px' }}
-      className="mt-24 mb-16 relative bg-white border border-slate-200 rounded-2xl p-6 lg:p-8 overflow-hidden shadow-xl w-full"
+    <div
+      className={`relative rounded-2xl p-6 lg:p-8 overflow-hidden shadow-xl w-full max-w-6xl ${
+        isDark ? 'bg-dark-800 border border-slate-700' : 'bg-white border border-slate-200'
+      }`}
     >
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-50 blur-[100px] rounded-full pointer-events-none" />
+      {/* Close button */}
+      {onClose && (
+        <button
+          onClick={onClose}
+          className={`absolute top-4 right-4 p-2 rounded-lg transition-colors z-20 ${
+            isDark
+              ? 'hover:bg-dark-700 text-slate-400 hover:text-slate-200'
+              : 'hover:bg-slate-100 text-slate-500 hover:text-slate-700'
+          }`}
+        >
+          <X size={20} />
+        </button>
+      )}
+
+      <div
+        className={`absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] blur-[100px] rounded-full pointer-events-none ${
+          isDark ? 'bg-brand-500/10' : 'bg-blue-50'
+        }`}
+      />
 
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 gap-4 relative z-10">
         <div>
-          <h3 className="text-2xl font-bold flex items-center gap-3 text-slate-900">
-            <ShieldCheck className="text-blue-600" /> Live Engine Simulation
+          <h3
+            className={`text-2xl font-bold flex items-center gap-3 ${isDark ? 'text-slate-100' : 'text-slate-900'}`}
+          >
+            <ShieldCheck className="text-brand-500" /> Live Engine Simulation
           </h3>
-          <p className="text-slate-500 text-sm mt-1 font-medium">
-            Target: <span className="text-blue-600 font-bold">{activeScenario.framework}</span> vs.
+          <p className={`text-sm mt-1 font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+            Target: <span className="text-brand-500 font-bold">{activeScenario.framework}</span> vs.
             AWS Infrastructure
           </p>
         </div>
@@ -161,10 +208,14 @@ export default function TechDemo() {
           disabled={status !== 'idle' && status !== 'complete'}
           className={`relative group flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all overflow-hidden shadow-sm shrink-0 ${
             status === 'extracting' || status === 'mapping'
-              ? 'bg-slate-50 text-slate-400 border border-slate-200 cursor-not-allowed'
+              ? isDark
+                ? 'bg-dark-700 text-slate-500 border border-slate-700 cursor-not-allowed'
+                : 'bg-slate-50 text-slate-400 border border-slate-200 cursor-not-allowed'
               : status === 'complete'
-                ? 'bg-white text-slate-800 hover:bg-slate-50 border border-slate-200 hover:shadow-md'
-                : 'bg-blue-600 text-white hover:bg-blue-700 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(37,99,235,0.2)]'
+                ? isDark
+                  ? 'bg-dark-700 text-slate-200 hover:bg-dark-600 border border-slate-700 hover:shadow-md'
+                  : 'bg-white text-slate-800 hover:bg-slate-50 border border-slate-200 hover:shadow-md'
+                : 'bg-brand-500 text-white hover:bg-brand-600 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(59,130,246,0.3)]'
           }`}
         >
           {status === 'idle' && (
@@ -185,31 +236,46 @@ export default function TechDemo() {
         </button>
       </div>
 
-      <div className="grid lg:grid-cols-[1fr_80px_1.2fr] gap-4 lg:gap-0 items-stretch min-h-[550px] relative z-10">
-        <div className="bg-slate-50 rounded-xl border border-slate-200 overflow-hidden h-full flex flex-col relative shadow-inner">
-          <div className="bg-slate-100 px-4 py-3 border-b border-slate-200 flex items-center justify-between text-sm text-slate-600 font-mono z-10">
+      <div className="grid lg:grid-cols-[1fr_80px_1.2fr] gap-4 lg:gap-0 items-stretch h-[500px] relative z-10">
+        {/* Left Panel - JSON */}
+        <div
+          className={`rounded-xl border overflow-hidden flex flex-col relative shadow-inner ${
+            isDark ? 'bg-dark-900 border-slate-700' : 'bg-slate-50 border-slate-200'
+          }`}
+        >
+          <div
+            className={`px-4 py-3 border-b flex items-center justify-between text-sm font-mono z-10 ${
+              isDark
+                ? 'bg-dark-700 border-slate-700 text-slate-400'
+                : 'bg-slate-100 border-slate-200 text-slate-600'
+            }`}
+          >
             <div className="flex items-center gap-2 font-semibold shrink-0">
               <FileJson
                 size={16}
                 className={
                   status === 'complete' || status === 'mapping'
-                    ? 'text-indigo-600'
-                    : 'text-slate-400'
+                    ? 'text-brand-500'
+                    : isDark
+                      ? 'text-slate-500'
+                      : 'text-slate-400'
                 }
               />
               extracted_rules.json
             </div>
             {status === 'extracting' && (
-              <span className="text-xs text-blue-600 font-bold animate-pulse text-right">
+              <span className="text-xs text-brand-500 font-bold animate-pulse text-right">
                 Reading PDF...
               </span>
             )}
             {status === 'mapping' && (
-              <span className="text-xs text-indigo-600 font-bold animate-pulse text-right">
+              <span className="text-xs text-brand-400 font-bold animate-pulse text-right">
                 Streaming Tokens...
               </span>
             )}
-            {status === 'complete' && <CheckCircle2 size={16} className="text-blue-600 shrink-0" />}
+            {status === 'complete' && (
+              <CheckCircle2 size={16} className="text-brand-500 shrink-0" />
+            )}
           </div>
 
           <div className="p-5 overflow-hidden text-[13px] md:text-sm font-mono flex-grow relative whitespace-pre-wrap break-words">
@@ -219,13 +285,19 @@ export default function TechDemo() {
                   initial={{ top: '-100%' }}
                   animate={{ top: '200%' }}
                   transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
-                  className="absolute left-0 right-0 h-32 bg-gradient-to-b from-transparent via-blue-200/50 to-transparent border-b border-blue-400 z-20 pointer-events-none"
+                  className={`absolute left-0 right-0 h-32 bg-gradient-to-b from-transparent to-transparent z-20 pointer-events-none ${
+                    isDark
+                      ? 'via-brand-500/20 border-b border-brand-500'
+                      : 'via-blue-200/50 border-b border-blue-400'
+                  }`}
                 />
               )}
             </AnimatePresence>
 
             {status === 'idle' && (
-              <div className="absolute inset-0 flex items-center justify-center text-slate-400 font-medium">
+              <div
+                className={`absolute inset-0 flex items-center justify-center font-medium ${isDark ? 'text-slate-500' : 'text-slate-400'}`}
+              >
                 Awaiting document ingestion...
               </div>
             )}
@@ -237,53 +309,65 @@ export default function TechDemo() {
                   variants={jsonContainerVariants}
                   initial="hidden"
                   animate="show"
-                  className="text-slate-700 relative"
+                  className={isDark ? 'text-slate-300' : 'text-slate-700'}
                 >
-                  <motion.div variants={jsonTypewriterVariants} className="text-slate-400">
+                  <motion.div
+                    variants={jsonTypewriterVariants}
+                    className={isDark ? 'text-slate-500' : 'text-slate-400'}
+                  >
                     {'{'}
                   </motion.div>
                   <motion.div variants={jsonTypewriterVariants}>
                     {'  '}
-                    <span className="text-blue-600 font-medium">"regulatory_framework"</span>:{' '}
-                    <span className="text-emerald-600">"{activeScenario.framework}"</span>,
+                    <span className="text-brand-500 font-medium">"regulatory_framework"</span>:{' '}
+                    <span className="text-emerald-500">"{activeScenario.framework}"</span>,
                   </motion.div>
                   <motion.div variants={jsonTypewriterVariants}>
                     {'  '}
-                    <span className="text-blue-600 font-medium">"article"</span>:{' '}
-                    <span className="text-emerald-600">"{activeScenario.article}"</span>,
+                    <span className="text-brand-500 font-medium">"article"</span>:{' '}
+                    <span className="text-emerald-500">"{activeScenario.article}"</span>,
                   </motion.div>
                   <motion.div variants={jsonTypewriterVariants}>
                     {'  '}
-                    <span className="text-blue-600 font-medium">"mandates"</span>:{' '}
-                    <span className="text-slate-400">{'['}</span>
+                    <span className="text-brand-500 font-medium">"mandates"</span>:{' '}
+                    <span className={isDark ? 'text-slate-500' : 'text-slate-400'}>{'['}</span>
                   </motion.div>
-                  <motion.div variants={jsonTypewriterVariants} className="text-slate-400">
+                  <motion.div
+                    variants={jsonTypewriterVariants}
+                    className={isDark ? 'text-slate-500' : 'text-slate-400'}
+                  >
                     {'    {'}
                   </motion.div>
                   <motion.div variants={jsonTypewriterVariants}>
                     {'      '}
-                    <span className="text-blue-600 font-medium">"requirement"</span>:{' '}
-                    <span className="text-emerald-600">"{activeScenario.requirement}"</span>,
+                    <span className="text-brand-500 font-medium">"requirement"</span>:{' '}
+                    <span className="text-emerald-500">"{activeScenario.requirement}"</span>,
                   </motion.div>
                   <motion.div variants={jsonTypewriterVariants}>
                     {'      '}
-                    <span className="text-blue-600 font-medium">"target_resources"</span>: [
-                    <span className="text-emerald-600">"{activeScenario.targetResource}"</span>],
+                    <span className="text-brand-500 font-medium">"target_resources"</span>: [
+                    <span className="text-emerald-500">"{activeScenario.targetResource}"</span>],
                   </motion.div>
                   <motion.div variants={jsonTypewriterVariants}>
                     {'      '}
-                    <span className="text-blue-600 font-medium">"confidence_score"</span>:{' '}
-                    <span className="text-amber-600">{activeScenario.confidence}</span>
+                    <span className="text-brand-500 font-medium">"confidence_score"</span>:{' '}
+                    <span className="text-amber-500">{activeScenario.confidence}</span>
                   </motion.div>
-                  <motion.div variants={jsonTypewriterVariants} className="text-slate-400">
+                  <motion.div
+                    variants={jsonTypewriterVariants}
+                    className={isDark ? 'text-slate-500' : 'text-slate-400'}
+                  >
                     {'    }'}
                   </motion.div>
-                  <motion.div variants={jsonTypewriterVariants} className="text-slate-400">
+                  <motion.div
+                    variants={jsonTypewriterVariants}
+                    className={isDark ? 'text-slate-500' : 'text-slate-400'}
+                  >
                     {']'}
                   </motion.div>
                   <motion.div
                     variants={jsonTypewriterVariants}
-                    className="flex items-center gap-1 text-slate-400"
+                    className={`flex items-center gap-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}
                   >
                     {'}'}
 
@@ -292,7 +376,7 @@ export default function TechDemo() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: [0, 1, 0] }}
                         transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
-                        className="w-2 h-4 bg-indigo-500 inline-block align-middle"
+                        className="w-2 h-4 bg-brand-500 inline-block align-middle"
                       />
                     )}
                   </motion.div>
@@ -302,12 +386,18 @@ export default function TechDemo() {
           </div>
         </div>
 
+        {/* Arrow connector */}
         <div className="hidden lg:flex flex-col items-center justify-center relative">
           <svg width="80" height="24" viewBox="0 0 80 24" fill="none" className="absolute">
-            <path d="M0 12L80 12" stroke="#e2e8f0" strokeWidth="2" strokeDasharray="4 4" />
+            <path
+              d="M0 12L80 12"
+              stroke={isDark ? '#374151' : '#e2e8f0'}
+              strokeWidth="2"
+              strokeDasharray="4 4"
+            />
             <motion.path
               d="M0 12L80 12"
-              stroke="#2563eb"
+              stroke="#3B82F6"
               strokeWidth="2"
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{
@@ -323,48 +413,79 @@ export default function TechDemo() {
                 initial={{ left: 0, opacity: 1 }}
                 animate={{ left: '100%', opacity: 0 }}
                 transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                className="absolute w-2.5 h-2.5 rounded-full bg-blue-600 shadow-[0_0_12px_#2563eb]"
+                className="absolute w-2.5 h-2.5 rounded-full bg-brand-500 shadow-[0_0_12px_#3B82F6]"
                 style={{ top: 'calc(50% - 5px)' }}
               />
             )}
           </AnimatePresence>
         </div>
 
-        <div className="bg-slate-50 rounded-xl border border-slate-200 overflow-hidden h-full flex flex-col relative shadow-inner">
-          <div className="bg-slate-100 px-4 py-3 border-b border-slate-200 flex items-center justify-between text-sm font-mono z-10">
-            <div className="flex items-center gap-2 font-semibold text-slate-700 shrink-0">
+        {/* Right Panel - Diff */}
+        <div
+          className={`rounded-xl border overflow-hidden flex flex-col relative shadow-inner ${
+            isDark ? 'bg-dark-900 border-slate-700' : 'bg-slate-50 border-slate-200'
+          }`}
+        >
+          <div
+            className={`px-4 py-3 border-b flex items-center justify-between text-sm font-mono z-10 ${
+              isDark
+                ? 'bg-dark-700 border-slate-700 text-slate-400'
+                : 'bg-slate-100 border-slate-200 text-slate-700'
+            }`}
+          >
+            <div className="flex items-center gap-2 font-semibold shrink-0">
               <GitPullRequest
                 size={16}
-                className={status === 'complete' ? 'text-blue-600' : 'text-slate-400'}
+                className={
+                  status === 'complete'
+                    ? 'text-brand-500'
+                    : isDark
+                      ? 'text-slate-500'
+                      : 'text-slate-400'
+                }
               />
               {activeScenario.fileName}
             </div>
             {status === 'mapping' && (
-              <span className="text-xs text-blue-600 font-bold animate-pulse text-right">
+              <span className="text-xs text-brand-500 font-bold animate-pulse text-right">
                 Generating diff...
               </span>
             )}
             {status === 'complete' && (
-              <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-200 shrink-0">
+              <span
+                className={`text-[11px] font-bold px-2 py-0.5 rounded border shrink-0 ${
+                  isDark
+                    ? 'text-emerald-400 bg-emerald-900/30 border-emerald-800'
+                    : 'text-emerald-700 bg-emerald-100 border-emerald-200'
+                }`}
+              >
                 +{activeScenario.additions} additions
               </span>
             )}
           </div>
 
-          <div className="p-0 overflow-hidden text-sm flex-grow relative bg-white">
+          <div
+            className={`p-0 overflow-hidden text-sm flex-grow relative ${isDark ? 'bg-dark-800' : 'bg-white'}`}
+          >
             <AnimatePresence>
               {status === 'mapping' && (
                 <motion.div
                   initial={{ top: '-100%' }}
                   animate={{ top: '200%' }}
                   transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
-                  className="absolute left-0 right-0 h-32 bg-gradient-to-b from-transparent via-emerald-200/50 to-transparent border-b border-emerald-400 z-20 pointer-events-none"
+                  className={`absolute left-0 right-0 h-32 bg-gradient-to-b from-transparent to-transparent z-20 pointer-events-none ${
+                    isDark
+                      ? 'via-emerald-500/20 border-b border-emerald-500'
+                      : 'via-emerald-200/50 border-b border-emerald-400'
+                  }`}
                 />
               )}
             </AnimatePresence>
 
             {status === 'idle' || status === 'extracting' ? (
-              <div className="absolute inset-0 flex items-center justify-center text-slate-400 font-medium">
+              <div
+                className={`absolute inset-0 flex items-center justify-center font-medium ${isDark ? 'text-slate-500' : 'text-slate-400'}`}
+              >
                 Awaiting infrastructure mapping...
               </div>
             ) : null}
@@ -380,7 +501,11 @@ export default function TechDemo() {
                 >
                   <motion.div
                     variants={diffLineVariants}
-                    className="bg-blue-50 text-slate-500 text-xs py-2 px-4 border-b border-slate-200 font-mono w-full shrink-0"
+                    className={`text-xs py-2 px-4 border-b font-mono w-full shrink-0 ${
+                      isDark
+                        ? 'bg-dark-700 text-slate-500 border-slate-700'
+                        : 'bg-blue-50 text-slate-500 border-slate-200'
+                    }`}
                   >
                     @@ -12,{activeScenario.oldCode.length} +12,
                     {activeScenario.oldCode.length + activeScenario.additions} @@
@@ -413,13 +538,54 @@ export default function TechDemo() {
                     content="  }"
                   />
 
-                  <div className="flex-grow bg-white"></div>
+                  <div className={`flex-grow ${isDark ? 'bg-dark-800' : 'bg-white'}`}></div>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
+
+export default function TechDemoModal({ isOpen, onClose }) {
+  const { isDark } = useTheme();
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={onClose}
+        >
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className={`absolute inset-0 ${isDark ? 'bg-black/80' : 'bg-black/50'} backdrop-blur-sm`}
+          />
+
+          {/* Modal Content */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            onClick={(e) => e.stopPropagation()}
+            className="relative z-10"
+          >
+            <TechDemoContent onClose={onClose} />
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// Also export the content for potential inline use
+export { TechDemoContent };

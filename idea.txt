@@ -1,0 +1,63 @@
+Problem —The Translation Gap
+•
+Macro: Regulations (EU AI Act, DORA, SEC rulings) are accelerating faster than engineering cycles.
+•
+Micro: The pipeline is 100% manual, slow, and expensive.
+•
+The Broken Game of Telephone: Lawyers read 300-page PDFs → Consultants map concepts → PMs write Jira tickets → Devs manually hunt for legacy code. By the time code is updated, new laws are passed.
+Existing Solutions
+•
+Manual Consulting: Extremely slow, heavily dependent on human translation, and prohibitively expensive.
+•
+Traditional CSPM (Cloud Security Posture Management): Tools like Wiz or AWS Security Hub flag misconfigurations against pre-defined policies, but they cannot ingest new, raw legal text on day zero.
+•
+The Gap: There is no automated bridge between "Legalese" and "Infrastructure-as-Code (IaC)."
+The solution -RegRadar
+•
+What it is: An AI-driven Regulatory Intelligence Agent for modern, cloud-native architectures.
+•
+What it does: Ingests raw legal text, extracts actionable technical mandates, and calculates the exact "blast radius" in your infrastructure.
+•
+The Output: Doesn't just say "you are non-compliant" —it points to the exact Terraform resource and drafts the Pull Request to fix it.
+Workflow
+•
+Phase 1: Legal Ingestion & HITL. LLM digests dense PDFs into a structured JSON schema of rules (with Confidence Scores). Compliance teams approve them (Zero AI Liability).
+•
+Phase 2: Cloud & IaCScanner. Targets deterministic modern states (Terraform, K8s manifests) to avoid legacy monolithic false positives.
+•
+Phase 3: Blast Radius & Auto-Remediation. Maps failing resources to the specific legal article and generates Config-Only Pull Requests in GitHub.
+System Design
+Architecture –AWS
+•
+Amazon Bedrock: Powers the core LLM ingestion and JSON extraction (Claude 3 or similar large-context model)
+•
+Amazon S3: Secure storage for uploaded regulatory documents and IaCstate files.
+•
+AWS Lambda & EventBridge: Serverless execution for the IaCscanning engine and triggering scans on new Git commits.
+•
+Amazon VPC: Ensures Zero-Trust deployment; client code/infrastructure state never leaves their environment.
+Tech Stack
+•
+GenAI / Logic: Python, LangChain, Amazon Bedrock APIs.
+•
+Frontend / UI: React, Next.js, Tailwind CSS (for the HITL approval dashboard).
+•
+Scanning Target: Terraform (HCL), Kubernetes (YAML).
+•
+Integrations: GitHub REST API (for reading repos and opening automated PRs).
+Mockup
+Impact
+•
+Who Benefits:
+•
+Legal/Compliance: Empowered with an "exoskeleton" to enact changes directly
+•
+DevSecOps: Freed from manual backlog hunting
+•
+Metrics for Success:
+•
+Reduction in Time-to-Compliance (Months → Minutes).
+•
+Zero AI liability (due to HITL).
+•
+Percentage of automated, config-only fixes successfully merged.

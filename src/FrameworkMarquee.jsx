@@ -1,42 +1,99 @@
 import React from 'react';
-import { Shield, FileText, Lock, Globe, Landmark, Scale } from 'lucide-react';
+import {
+  Shield,
+  FileText,
+  Lock,
+  Globe,
+  Landmark,
+  Scale,
+  Building2,
+  ShieldCheck,
+} from 'lucide-react';
+import { useTheme } from './context/ThemeContext';
 
 const frameworks = [
-  { name: 'EU AI Act', icon: <Scale size={18} /> },
-  { name: 'DORA', icon: <Shield size={18} /> },
-  { name: 'SOC 2 Type II', icon: <Lock size={18} /> },
-  { name: 'NIST CSF 2.0', icon: <FileText size={18} /> },
-  { name: 'SEC Cyber Rules', icon: <Landmark size={18} /> },
-  { name: 'GDPR', icon: <Globe size={18} /> },
-  { name: 'HIPAA', icon: <Shield size={18} /> },
-  { name: 'ISO 27001', icon: <Lock size={18} /> },
+  { name: 'EU AI Act', icon: Scale },
+  { name: 'DORA', icon: Shield },
+  { name: 'SOC 2 Type II', icon: Lock },
+  { name: 'NIST CSF 2.0', icon: FileText },
+  { name: 'SEC Cyber Rules', icon: Landmark },
+  { name: 'GDPR', icon: Globe },
+  { name: 'HIPAA', icon: ShieldCheck },
+  { name: 'ISO 27001', icon: Building2 },
 ];
 
-const FrameworkCard = ({ fw }) => (
-  <div className="flex items-center gap-3 px-5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-blue-300 transition-all duration-300 cursor-default hover:shadow-md hover:-translate-y-1 shrink-0 group">
-    <div className="text-slate-400 group-hover:text-blue-600 transition-colors">{fw.icon}</div>
-    <span className="text-slate-600 font-bold text-sm tracking-wide group-hover:text-slate-900 transition-colors">
-      {fw.name}
-    </span>
-  </div>
-);
+const FrameworkCard = ({ fw, isDark }) => {
+  const Icon = fw.icon;
+  return (
+    <div
+      className={`flex items-center gap-3 px-5 py-3 rounded-lg border transition-all duration-300 cursor-default shrink-0 group ${
+        isDark
+          ? 'border-slate-800 bg-dark-800/50 hover:bg-dark-800 hover:border-slate-700'
+          : 'border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 shadow-sm'
+      }`}
+    >
+      <Icon
+        size={16}
+        className={`group-hover:text-brand-400 transition-colors ${isDark ? 'text-slate-500' : 'text-slate-400'}`}
+      />
+      <span
+        className={`font-medium text-sm tracking-wide transition-colors whitespace-nowrap ${
+          isDark
+            ? 'text-slate-400 group-hover:text-slate-200'
+            : 'text-slate-600 group-hover:text-slate-900'
+        }`}
+      >
+        {fw.name}
+      </span>
+    </div>
+  );
+};
 
 export default function FrameworkMarquee() {
-  return (
-    <div className="py-10 border-y border-slate-200 bg-white overflow-hidden relative flex mt-12 mb-20 shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)] group">
-      <div className="absolute left-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
-      <div className="absolute right-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
+  const { isDark } = useTheme();
 
+  return (
+    <div
+      className={`py-8 border-y overflow-hidden relative flex group ${
+        isDark ? 'border-slate-800/50 bg-dark-900' : 'border-slate-200 bg-slate-50'
+      }`}
+    >
+      {/* Gradient fade edges */}
+      <div
+        className={`absolute left-0 top-0 bottom-0 w-24 md:w-48 z-10 pointer-events-none ${
+          isDark
+            ? 'bg-gradient-to-r from-dark-900 to-transparent'
+            : 'bg-gradient-to-r from-slate-50 to-transparent'
+        }`}
+      />
+      <div
+        className={`absolute right-0 top-0 bottom-0 w-24 md:w-48 z-10 pointer-events-none ${
+          isDark
+            ? 'bg-gradient-to-l from-dark-900 to-transparent'
+            : 'bg-gradient-to-l from-slate-50 to-transparent'
+        }`}
+      />
+
+      {/* Marquee container */}
       <div className="flex w-max animate-marquee group-hover:[animation-play-state:paused]">
-        <div className="flex gap-8 pr-8">
+        {/* First set */}
+        <div className="flex gap-4 pr-4">
           {frameworks.map((fw, i) => (
-            <FrameworkCard key={`set1-${i}`} fw={fw} />
+            <FrameworkCard key={`set1-${i}`} fw={fw} isDark={isDark} />
           ))}
         </div>
 
-        <div aria-hidden="true" className="flex gap-8 pr-8">
+        {/* Duplicate for seamless loop */}
+        <div aria-hidden="true" className="flex gap-4 pr-4">
           {frameworks.map((fw, i) => (
-            <FrameworkCard key={`set2-${i}`} fw={fw} />
+            <FrameworkCard key={`set2-${i}`} fw={fw} isDark={isDark} />
+          ))}
+        </div>
+
+        {/* Third set for extra smooth looping */}
+        <div aria-hidden="true" className="flex gap-4 pr-4">
+          {frameworks.map((fw, i) => (
+            <FrameworkCard key={`set3-${i}`} fw={fw} isDark={isDark} />
           ))}
         </div>
       </div>
