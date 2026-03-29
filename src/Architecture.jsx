@@ -15,7 +15,7 @@ import {
 import TechDemo from './TechDemo';
 
 const ConnectorBeam = ({ delay = 0 }) => (
-  <div className="hidden md:flex flex-1 h-[2px] relative items-center mx-2 z-0 min-w-[30px]">
+  <div className="hidden md:flex flex-1 h-[2px] relative items-center mx-2 z-0 min-w-[30px] mt-8 md:mt-10">
     <div className="w-full h-[1px] border-t-2 border-slate-200 border-dashed" />
     <motion.div
       initial={{ left: '0%', opacity: 0 }}
@@ -86,20 +86,22 @@ const ArchNode = ({ icon, title, subtitle, isCore = false }) => {
           </div>
         )}
 
+        {/* Updated hover classes for the box and icon */}
         <div
           className={`w-16 h-16 md:w-20 md:h-20 bg-white border rounded-2xl flex items-center justify-center mb-4 relative z-10 transition-all duration-300 shadow-sm
             ${
               isCore
                 ? 'border-blue-300 text-blue-600 bg-gradient-to-br from-white to-blue-50/50 group-hover:border-blue-400 group-hover:shadow-md'
-                : 'border-slate-200 text-slate-600 group-hover:border-slate-300 group-hover:shadow-md group-hover:text-slate-900 group-hover:-translate-y-1'
+                : 'border-slate-200 text-slate-600 group-hover:border-blue-300 group-hover:shadow-md group-hover:text-blue-600 group-hover:-translate-y-1 group-hover:bg-blue-50/50'
             }
           `}
         >
           <div className="relative z-10">{icon}</div>
         </div>
       </div>
+      {/* Updated hover classes for the title text */}
       <h4
-        className={`text-sm font-bold text-center ${isCore ? 'text-blue-700' : 'text-slate-800'}`}
+        className={`text-sm font-bold text-center transition-colors duration-300 ${isCore ? 'text-blue-700' : 'text-slate-800 group-hover:text-blue-600'}`}
       >
         {title}
       </h4>

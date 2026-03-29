@@ -13,7 +13,8 @@ const frameworks = [
 ];
 
 const FrameworkCard = ({ fw }) => (
-  <div className="flex items-center gap-3 px-5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-blue-300 transition-all duration-300 cursor-default hover:shadow-md hover:-translate-y-1 shrink-0 group">
+  // Added whitespace-nowrap here to prevent text overlap
+  <div className="flex items-center gap-3 px-5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-blue-300 transition-all duration-300 cursor-default hover:shadow-md hover:-translate-y-1 shrink-0 group whitespace-nowrap">
     <div className="text-slate-400 group-hover:text-blue-600 transition-colors">{fw.icon}</div>
     <span className="text-slate-600 font-bold text-sm tracking-wide group-hover:text-slate-900 transition-colors">
       {fw.name}
